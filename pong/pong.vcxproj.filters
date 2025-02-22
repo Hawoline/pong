@@ -15,11 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
     <Image Include="..\Debug\back.bmp">
       <Filter>Resource Files</Filter>
     </Image>
@@ -41,5 +36,10 @@
       <Filter>Resource Files</Filter>
     </Media>
     <Media Include="..\Debug\music.mp3" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\Debug\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
