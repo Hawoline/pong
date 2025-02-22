@@ -11,6 +11,7 @@ typedef struct {
     HBITMAP hBitmap;//хэндл к спрайту шарика 
     bool active;
 } sprite;
+//efefefefefefe
 
 sprite racket;//ракетка игрока
 /// <summary>
