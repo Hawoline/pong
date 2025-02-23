@@ -281,20 +281,23 @@ void ProcessBall()
 void DrawBresenhamLine() {
 	/*
 	1. Нарисовать линию DONE
-	2. Нарисовать линию так, чтобы был инвертированы начала x0, x1, y0, y1
-		- нарисовать прямую линию
+	2. Нарисовать окружность
 	*/
-	int center_of_line = 400;
-	int x0 = center_of_line + 100;
-	int y0 = center_of_line;
-	int x1 = center_of_line;
-	int y1 = center_of_line;
+	int origin_of_the_coordinate_system = 400;
+	int x0 = origin_of_the_coordinate_system;
+	int y0 = origin_of_the_coordinate_system;
+	int x1 = origin_of_the_coordinate_system + 100;
+	int y1 = origin_of_the_coordinate_system + 50;
+	SetPixel(window.context, origin_of_the_coordinate_system, origin_of_the_coordinate_system, RGB(102, 255, 0));
+	SetPixel(window.context, origin_of_the_coordinate_system + 1, origin_of_the_coordinate_system, RGB(102, 255, 0));
+	SetPixel(window.context, origin_of_the_coordinate_system, origin_of_the_coordinate_system + 1, RGB(102, 255, 0));
+	SetPixel(window.context, origin_of_the_coordinate_system + 1, origin_of_the_coordinate_system + 1, RGB(102, 255, 0));
 
 	int delta_x = abs(x1 - x0);
 	int delta_y = abs(y1 - y0);
 
 	float error = 0;
-	float delta_error = (float) (delta_y + 1) / (delta_x + 1);
+	int delta_error = delta_y + 1;
 
 	int direction_y = y1 - y0;
 	if (direction_y < 0) {
@@ -303,44 +306,16 @@ void DrawBresenhamLine() {
 	else {
 		direction_y = 1;
 	}
-	int current_y = y0;
-	int direction_x = x1 - x0;
-	if (direction_x < 0) {
-		direction_x = -1;
-	}
-	if (direction_x > 0) {
-		direction_x = 1;
-	}
-	if (direction_x > 0) {
-		for (int current_x = x0; current_x < x1; current_x++) {
-			SetPixel(window.context, current_x, current_y, RGB(255, 255, 255));
-			error += delta_error;
-			if (error >= 1) {
-				current_y += direction_y;
-				error -= 1;
-			}
-		}
-	}
-	else {
-		for (int current_x = x0; current_x > x1; current_x--) {
-			SetPixel(window.context, current_x, current_y, RGB(255, 255, 255));
-			error += delta_error;
-			if (error >= 1) {
-				current_y += direction_y;
-				error -= 1;
-			}
-		}
-	}
 
-	// Не работает TODO пофиксить
-	/*for (int current_x = x0; (direction_x > 0) ? current_x < x1 : current_x > x1; current_x += direction_x) {
+	int current_y = y0;
+	for (int current_x = x0; current_x < x1; current_x++) {
 		SetPixel(window.context, current_x, current_y, RGB(255, 255, 255));
 		error += delta_error;
-		if (error >= 1) {
+		if (error >= delta_x + 1) {
 			current_y += direction_y;
-			error -= 1;
+			error -= delta_x + 1;
 		}
-	}*/
+	}
 }
 
 void InitWindow()
@@ -371,7 +346,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	while (!GetAsyncKeyState(VK_ESCAPE))
 	{
 		ShowRacketAndBall();//рисуем фон, ракетку и шарик
-		ShowBlocks();
+		//ShowBlocks();
 		ShowScore(); //рисуем очик и жизни
 
 		DrawBresenhamLine();
