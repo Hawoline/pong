@@ -282,13 +282,13 @@ void DrawBresenhamLine() {
 	/*
 	1. Нарисовать линию DONE
 	2. Нарисовать линию так, чтобы был инвертированы начала x0, x1, y0, y1
-	3. Нарисовать линию вокруг заданной точки
+		- нарисовать прямую линию
 	*/
 	int center_of_line = 400;
-	int x0 = center_of_line;
+	int x0 = center_of_line + 100;
 	int y0 = center_of_line;
-	int x1 = center_of_line + 100;
-	int y1 = center_of_line + 50;
+	int x1 = center_of_line;
+	int y1 = center_of_line;
 
 	int delta_x = abs(x1 - x0);
 	int delta_y = abs(y1 - y0);
@@ -308,7 +308,7 @@ void DrawBresenhamLine() {
 	if (direction_x < 0) {
 		direction_x = -1;
 	}
-	if (direction_x < 0) {
+	if (direction_x > 0) {
 		direction_x = 1;
 	}
 	if (direction_x > 0) {
@@ -333,14 +333,14 @@ void DrawBresenhamLine() {
 	}
 
 	// Не работает TODO пофиксить
-	for (int current_x = x0; (direction_x > 0) ? current_x < x1 : current_x > x1; current_x += direction_x) {
+	/*for (int current_x = x0; (direction_x > 0) ? current_x < x1 : current_x > x1; current_x += direction_x) {
 		SetPixel(window.context, current_x, current_y, RGB(255, 255, 255));
 		error += delta_error;
 		if (error >= 1) {
 			current_y += direction_y;
 			error -= 1;
 		}
-	}
+	}*/
 }
 
 void InitWindow()
