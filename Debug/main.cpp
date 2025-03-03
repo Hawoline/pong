@@ -209,10 +209,10 @@ void CheckFloor()
 }
 void CheckBLocks()
 {
-	int l = sqrt(ball.dx * ball.speed * ball.dx * ball.speed + ball.dy * ball.speed * ball.dy * ball.speed);
-	for (int t = 0; t < l; t++) {
-		float current_x = ball.x + ball.dx * ball.speed * t / (float)l;
-		float current_y = ball.y + ball.dy * ball.speed * t / (float)l;
+	float path_which_will_pass_the_ball_outside_the_frame = sqrt(ball.dx * ball.speed * ball.dx * ball.speed + ball.dy * ball.speed * ball.dy * ball.speed);
+	for (int point_of_path = 0; point_of_path < path_which_will_pass_the_ball_outside_the_frame; point_of_path++) {
+		float current_x = ball.x + ball.dx * ball.speed * point_of_path / path_which_will_pass_the_ball_outside_the_frame;
+		float current_y = ball.y + ball.dy * ball.speed * point_of_path / path_which_will_pass_the_ball_outside_the_frame;
 
 		for (int i = 0; i < block_columns; i++) {
 			for (int j = 0; j < block_rows; j++) {
