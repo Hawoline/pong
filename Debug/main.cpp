@@ -23,7 +23,8 @@ struct {
 	HDC device_context, context;// два контекста устройства (для буферизации)
 	int width, height;
 } window;
-
+// TODO fix read and write index out of bounds exception
+// при угле 90 градусов игра не шарик не перелетает через блок
 HBITMAP hBack;
 
 void InitGame()
