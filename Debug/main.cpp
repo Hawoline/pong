@@ -58,7 +58,7 @@ void InitGame()
 
 	ball.dy = (rand() % 65 + 35) / 100.;
 	ball.dx = -(1 - ball.dy);
-	ball.speed = 250;
+	ball.speed = 200;
 	ball.rad = 20;
 	ball.x = racket.x;
 	ball.y = racket.y - ball.rad;
@@ -80,14 +80,14 @@ void ShowScoreAndHealth()
 	auto hFont = CreateFont(70, 0, 0, 0, FW_BOLD, 0, 0, 0, 0, 0, 0, 2, 0, "CALIBRI");
 	auto hTmp = (HFONT)SelectObject(window.context, hFont);
 
-	char txt[32];//буфер для текста
-	_itoa_s(game.score, txt, 10);//преобразование числовой переменной в текст. текст окажется в переменной txt
-	TextOutA(window.context, 10, 10, "Score", 5);
-	TextOutA(window.context, 200, 10, (LPCSTR)txt, strlen(txt));
+	//char txt[32];//буфер для текста
+	//_itoa_s(game.score, txt, 10);//преобразование числовой переменной в текст. текст окажется в переменной txt
+	//TextOutA(window.context, 10, 10, "Score", 5);
+	//TextOutA(window.context, 200, 10, (LPCSTR)txt, strlen(txt));
 
-	_itoa_s(game.balls, txt, 10);
-	TextOutA(window.context, 10, 100, "Balls", 5);
-	TextOutA(window.context, 200, 100, (LPCSTR)txt, strlen(txt));
+	//_itoa_s(game.balls, txt, 10);
+	//TextOutA(window.context, 10, 100, "Balls", 5);
+	//TextOutA(window.context, 200, 100, (LPCSTR)txt, strlen(txt));
 }
 
 void ProcessInput()
@@ -231,11 +231,14 @@ void CheckBLocks()
 
 					if (rebound_small_x < rebound_small_y) {
 						ball.dx *= -1;
+						int distance_between_ball_x_and_current_x = ball.x - current_x;
+						ball.x -= distance_between_ball_x_and_current_x * 2;
 					}
 					else {
 						ball.dy *= -1;
+						int distance_between_ball_y_and_current_y = ball.y - current_y;
+						ball.y -= distance_between_ball_y_and_current_y * 2;
 					}
-					return;
 				}
 			}
 		}
