@@ -1,5 +1,13 @@
 #include "windows.h"
 #include "math.h"
+#include "debugapi.h"
+
+//#define debugLayer
+
+#ifdef debugLayer
+
+#endif
+
 
 typedef struct {
 	float x, y, width, height, rad, dx, dy, speed;
@@ -208,18 +216,35 @@ void CheckFloor()
 		}
 	}
 }
+
+
+bool collision_status = false;
 void CheckBLocks()
 {
-	float path_which_will_pass_the_ball_outside_the_frame = sqrt(ball.dx * ball.speed * ball.dx * ball.speed + ball.dy * ball.speed * ball.dy * ball.speed);
+	collision_status = false;
+	float ball_x_temp = ball.x;
+	float ball_y_temp = ball.y;
+	float ball_dx_temp = ball.dx;
+	float ball_dy_temp = ball.dy;
+	float current_x;
+	float current_y;
+
+	float path_which_will_pass_the_ball_outside_the_frame = sqrt(ball_dx_temp * ball.speed * ball_dx_temp * ball.speed + ball_dy_temp * ball.speed * ball_dy_temp * ball.speed);
 	for (int point_of_path = 0; point_of_path < path_which_will_pass_the_ball_outside_the_frame; point_of_path++) {
-		float current_x = ball.x + ball.dx * ball.speed * point_of_path / path_which_will_pass_the_ball_outside_the_frame;
-		float current_y = ball.y + ball.dy * ball.speed * point_of_path / path_which_will_pass_the_ball_outside_the_frame;
+		
 
 		for (int i = 0; i < block_columns; i++) {
 			for (int j = 0; j < block_rows; j++) {
+
+				current_x = ball_x_temp + ball_dx_temp * ball.speed * point_of_path / path_which_will_pass_the_ball_outside_the_frame;
+				current_y = ball_y_temp + ball_dy_temp * ball.speed * point_of_path / path_which_will_pass_the_ball_outside_the_frame;
+#ifdef debugLayer
+				SetPixel(window.context, current_x, current_y, RGB(255, 255, 255));
+#endif
 				if (current_x >= blocks[i][j].x && current_x <= blocks[i][j].x + blocks[i][j].width &&
 					current_y >= blocks[i][j].y && current_y <= blocks[i][j].y + blocks[i][j].height &&
 					blocks[i][j].active) {
+					collision_status = true;
 					blocks[i][j].active = false;
 					int rebound_left_x = current_x - blocks[i][j].x;
 					int rebound_right_x = blocks[i][j].x + blocks[i][j].width - current_x;
@@ -230,19 +255,28 @@ void CheckBLocks()
 					int rebound_small_y = min(rebound_top_y, rebound_bottom_y);
 
 					if (rebound_small_x < rebound_small_y) {
-						ball.dx *= -1;
-						int distance_between_ball_x_and_current_x = ball.x - current_x;
-						ball.x -= distance_between_ball_x_and_current_x * 2;
+						ball_dx_temp *= -1;
+						int distance_between_ball_x_and_current_x = ball_x_temp - current_x;
+						ball_x_temp -= distance_between_ball_x_and_current_x * 2;
 					}
 					else {
-						ball.dy *= -1;
-						int distance_between_ball_y_and_current_y = ball.y - current_y;
-						ball.y -= distance_between_ball_y_and_current_y * 2;
+						ball_dy_temp *= -1;
+						int distance_between_ball_y_and_current_y = ball_y_temp - current_y;
+						ball_y_temp -= distance_between_ball_y_and_current_y * 2;
 					}
 				}
 			}
 		}
 	}
+
+	if (collision_status)
+	{
+		ball.x = current_x;
+		ball.y = current_y;
+		ball.dx = ball_dx_temp;
+		ball.dy = ball_dy_temp;
+	}
+	
 }
 
 void ProcessRoom()
@@ -254,8 +288,12 @@ void ProcessRoom()
 }
 void ProcessBall()
 {
+
 	if (game.action)
 	{
+		if (collision_status) {
+			return;
+	}
 		ball.x += ball.dx * ball.speed;
 		ball.y += ball.dy * ball.speed;
 	}
@@ -296,12 +334,24 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		ShowBlocks();
 		ShowScoreAndHealth();
 
-		BitBlt(window.device_context, 0, 0, window.width, window.height, window.context, 0, 0, SRCCOPY);//копируем буфер в окно
-		Sleep(16);//ждем 16 милисекунд (1/количество кадров в секунду)
-
+#ifdef debugLayer
+		/*POINT point;
+		GetCursorPos(&point);
+		ScreenToClient(window.hWnd, &point);
+		ball.x = point.x;
+		ball.y = point.y;*/
+#endif
 		ProcessInput();//опрос клавиатуры
 		LimitRacket();//проверяем, чтобы ракетка не убежала за экран
-		ProcessBall();
 		ProcessRoom();//обрабатываем отскоки от стен и каретки, попадание шарика в картетку
+		ProcessBall();
+
+		BitBlt(window.device_context, 0, 0, window.width, window.height, window.context, 0, 0, SRCCOPY);//копируем буфер в окно
+		Sleep(16);//ждем 16 милисекунд (1/количество кадров в секунду)
+#ifdef debugLayer
+		while (!GetAsyncKeyState(VK_RETURN)) {
+			Sleep(16);
+		}
+#endif
 	}
 }
